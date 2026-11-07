@@ -17,8 +17,8 @@ export default function SecuritySection({ onRequestDemo }) {
 
   return (
     <section id="security" className="relative bg-radial-vault bg-[#013b61] text-white py-28 px-6 sm:px-8 overflow-hidden border-b border-white/10">
-      {/* Ambient background glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#204862]/30 blur-[130px] rounded-full pointer-events-none" />
+      {/* High-performance ambient radial lighting (zero blur overhead) */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(32,72,98,0.5)_0%,_transparent_75%)] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto">
         {/* Section Header */}
@@ -37,14 +37,12 @@ export default function SecuritySection({ onRequestDemo }) {
             const Icon = securityIcons[idx];
 
             return (
-              <motion.div
+              <div
                 key={item.id}
-                whileHover={{ y: -4, borderColor: 'rgba(255,255,255,0.3)' }}
-                transition={{ duration: 0.25 }}
-                className="p-8 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md hover:bg-white/[0.08] transition-all duration-300 flex flex-col justify-between"
+                className="p-8 bg-[#012239]/80 border border-white/10 rounded-2xl hover:border-sky-400/40 hover:bg-[#012b47]/90 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group shadow-[0_8px_30px_rgba(0,0,0,0.15)] will-change-transform"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-[#204862]/30 border border-[#204862] text-sky-400 flex items-center justify-center mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-[#204862]/40 border border-[#204862] text-sky-400 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
                     <Icon className="w-6 h-6" />
                   </div>
                   <h3 className="font-display-serif text-2xl text-white font-normal mb-2.5">
@@ -62,13 +60,13 @@ export default function SecuritySection({ onRequestDemo }) {
                   </div>
                   <span className="text-white/40">Tier 1</span>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
         {/* Trust Badges Bar & Security Whitepaper CTA */}
-        <div className="p-8 bg-white/5 border border-white/15 rounded-2xl backdrop-blur-md flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div className="p-8 bg-[#012239]/85 border border-white/15 rounded-2xl flex flex-col lg:flex-row items-center justify-between gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.25)]">
           <div className="space-y-1 text-center lg:text-left">
             <h4 className="font-display-serif text-xl sm:text-2xl text-white">
               Institutional Security Whitepaper & SOC 2 Report

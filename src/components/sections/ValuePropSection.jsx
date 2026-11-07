@@ -14,24 +14,33 @@ export default function ValuePropSection({ onRequestDemo }) {
 
   const featureIcons = [Zap, Database, Bot, Lock];
 
-  // Synchronize active feature with user scrolling through the right column
+  // High-performance IntersectionObserver for scroll-sync (zero scroll event overhead, no layout thrashing)
   useEffect(() => {
-    const handleScroll = () => {
-      if (isManualClick.current) return;
-      if (window.innerWidth < 1024) return; // Scroll-sync only on desktop where sticky layout is active
+    if (typeof window === 'undefined' || window.innerWidth < 1024) return;
 
-      const triggerPoint = window.innerHeight * 0.45;
-      cardRefs.current.forEach((el, index) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= triggerPoint && rect.bottom >= triggerPoint) {
-          setActiveFeatureIndex(index);
-        }
-      });
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isManualClick.current) return;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute('data-feature-index'));
+            if (!Number.isNaN(index)) {
+              setActiveFeatureIndex((prev) => (prev !== index ? index : prev));
+            }
+          }
+        });
+      },
+      {
+        rootMargin: '-25% 0px -45% 0px',
+        threshold: 0.1
+      }
+    );
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    cardRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const handleFeatureClick = (index) => {
@@ -178,12 +187,12 @@ export default function ValuePropSection({ onRequestDemo }) {
               const isActive = activeFeatureIndex === idx;
 
               return (
-                <motion.div
+                <div
                   key={feature.id}
+                  data-feature-index={idx}
                   ref={(el) => (cardRefs.current[idx] = el)}
                   onClick={() => handleFeatureClick(idx)}
-                  whileHover={{ x: 4 }}
-                  className={`p-6 sm:p-7 rounded-2xl cursor-pointer transition-all duration-300 border ${isActive
+                  className={`p-6 sm:p-7 rounded-2xl cursor-pointer transition-all duration-300 hover:translate-x-1 border will-change-transform ${isActive
                     ? 'bg-white border-[#013b61] shadow-[0_12px_36px_rgba(1,59,97,0.14)] ring-1 ring-[#013b61]/20'
                     : 'bg-[#FBFBF9] border-[#E7E5DE] hover:border-[#D5D2C8] hover:bg-white/80'
                     }`}
@@ -232,7 +241,7 @@ export default function ValuePropSection({ onRequestDemo }) {
                       </div>
                     </motion.div>
                   )}
-                </motion.div>
+                </div>
               );
             })}
 

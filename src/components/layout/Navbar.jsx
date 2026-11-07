@@ -23,10 +23,18 @@ export default function Navbar({ onRequestDemo }) {
   const [activeTab, setActiveTab] = useState('Solutions');
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
 
-  // Scroll detection for navbar background adaptation
+  // Optimized scroll detection with rAF throttling & conditional state update
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 40;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -69,8 +77,8 @@ export default function Navbar({ onRequestDemo }) {
     <>
       {/* Top Navbar */}
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${scrolled
-          ? 'py-3 bg-[#013b61]/90 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.35)]'
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled
+          ? 'py-3 bg-[#013b61]/95 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.35)]'
           : 'py-3 bg-transparent'
           }`}
       >

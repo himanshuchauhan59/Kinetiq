@@ -20,8 +20,13 @@ function AnimatedCounter({ value, suffix }) {
   }, [isInView, spring, value]);
 
   useEffect(() => {
+    let lastInt = 0;
     const unsubscribe = spring.on('change', (latest) => {
-      setDisplayValue(Math.floor(latest));
+      const currentInt = Math.floor(latest);
+      if (currentInt !== lastInt) {
+        lastInt = currentInt;
+        setDisplayValue(currentInt);
+      }
     });
     return () => unsubscribe();
   }, [spring]);

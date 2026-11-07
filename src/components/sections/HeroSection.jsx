@@ -30,6 +30,9 @@ export default function HeroSection({ onRequestDemo }) {
       <img
         src="/Hero_background.png"
         alt=""
+        decoding="async"
+        loading="eager"
+        fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
       />
 
